@@ -1,10 +1,9 @@
 package com.nasahapps.mdt.example.ui.components
 
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
 import android.view.View
-import com.nasahapps.mdt.bottomnavigation.BottomNavigationBar
 import com.nasahapps.mdt.example.R
 import com.nasahapps.mdt.example.ui.main.MainActivity
 import com.nasahapps.mdt.example.ui.mock.MockFragment
@@ -42,33 +41,45 @@ class BottomNavigationFragment : ComponentFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        for (i in 0..arguments.getInt(EXTRA_NUM_TABS) - 1) {
-            bottomNav?.addTab(bottomNav?.newTab(TITLES[i], ContextCompat.getDrawable(activity, ICONS[i])))
+        when (arguments.getInt(EXTRA_NUM_TABS)) {
+            4 -> bottomNav?.inflateMenu(R.menu.menu_bottom_nav_four_items)
+            5 -> bottomNav?.inflateMenu(R.menu.menu_bottom_nav_five_items)
+            else -> bottomNav?.inflateMenu(R.menu.menu_bottom_nav_three_items)
         }
 
-        if (arguments.getBoolean(EXTRA_COLORED)) {
-            val newArray = IntArray(arguments.getInt(EXTRA_NUM_TABS))
-            for (i in 0..arguments.getInt(EXTRA_NUM_TABS) - 1) {
-                newArray[i] = COLORS[i]
-            }
-            bottomNav?.setBackgroundColorResources(*newArray)
-            bottomNav?.activeColor = Color.WHITE
-            bottomNav?.setDarkTheme(true)
+        bottomNav?.itemTextColor = ColorStateList.valueOf(if (arguments.getBoolean(EXTRA_COLORED)) Color.WHITE else bottomNav.itemIconTintList!!.defaultColor)
+
+        bottomNav?.setOnNavigationItemSelectedListener {
+            true
         }
 
-        bottomNav?.addOnTabSelectedListener(object : BottomNavigationBar.OnTabSelectedListener {
-            override fun onTabSelected(position: Int) {
-                childFragmentManager.beginTransaction()
-                        .replace(R.id.innerContainer, MockFragment.newInstance(position))
-                        .commit()
-            }
-
-            override fun onTabUnselected(position: Int) {
-            }
-
-            override fun onTabReselected(position: Int) {
-            }
-        })
+//        for (i in 0..arguments.getInt(EXTRA_NUM_TABS) - 1) {
+//            bottomNav?.addTab(bottomNav?.newTab(TITLES[i], ContextCompat.getDrawable(activity, ICONS[i])))
+//        }
+//
+//        if (arguments.getBoolean(EXTRA_COLORED)) {
+//            val newArray = IntArray(arguments.getInt(EXTRA_NUM_TABS))
+//            for (i in 0..arguments.getInt(EXTRA_NUM_TABS) - 1) {
+//                newArray[i] = COLORS[i]
+//            }
+//            bottomNav?.setBackgroundColorResources(*newArray)
+//            bottomNav?.activeColor = Color.WHITE
+//            bottomNav?.setDarkTheme(true)
+//        }
+//
+//        bottomNav?.addOnTabSelectedListener(object : BottomNavigationBar.OnTabSelectedListener {
+//            override fun onTabSelected(position: Int) {
+//                childFragmentManager.beginTransaction()
+//                        .replace(R.id.innerContainer, MockFragment.newInstance(position))
+//                        .commit()
+//            }
+//
+//            override fun onTabUnselected(position: Int) {
+//            }
+//
+//            override fun onTabReselected(position: Int) {
+//            }
+//        })
 
         if (savedInstanceState == null) {
             childFragmentManager.beginTransaction()
